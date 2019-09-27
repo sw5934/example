@@ -1,0 +1,3 @@
+회원관리,/member/list,MENU01
+게시판관리,/board,MENU02
+일정관리,/schedule/calendar,MENU03

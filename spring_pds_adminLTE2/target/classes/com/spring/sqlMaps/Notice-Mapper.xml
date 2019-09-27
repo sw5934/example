@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- 공지사항은 등록날짜 순으로 내림차순해서 만든다 -->
+
+
+<mapper namespace="Notice">
+	
+	<sql id="search">
+		<if test="searchType == 't'.toString()">
+			and title like '%' ||#{keyword}||'%'
+		</if>
+		<if test="searchType == 'w'.toString()">
+			and id like '%' ||#{keyword}||'%'
+		</if>
+		<if test="searchType == 'c'.toString()">
+			and content like '%' ||#{keyword}||'%'
+		</if>
+		<if test="searchType == 'tc'.toString()">
+			and (
+			title like '%' ||#{keyword}||'%'
+			or
+			content like '%' ||#{keyword}||'%'
+			)
+		</if>
+		<if test="searchType == 'cw'.toString()">
+			and (
+			content like '%' ||#{keyword}||'%'
+			or
+			id like '%' ||#{keyword}||'%'
+			)		
+		</if>
+		<if test="searchType == 'tcw'.toString()">
+			and (
+			title like '%' ||#{keyword}||'%'
+			or
+			content like '%' ||#{keyword}||'%'
+			or
+			id like '%' ||#{keyword}||'%'
+			)
+		</if>
+	</sql>
+	
+	<!-- 영향을 전혀주지 않는 쿼리문을 where절 맨앞에 하나 넣는다. -->
+	<select id="selectSearchNoticeList" resultType="notice">
+		select *
+		from notice
+		where nno is not null
+			<include refid="search"/>
+		order by nno desc
+	</select>
+	
+	<select id="selectSearchNoticeListCount" resultType="int">
+		select count(*)
+		from notice
+		where nno is not null
+			<include refid="search"/>
+		order by nno desc
+	</select>
+	
+	<!-- 리스트 조회 -->
+	<select id="selectNoticeList" resultType="notice">
+		select *
+		from notice
+		order by nno desc
+	</select>
+	
+	<select id="selectNoticeListCount" resultType="int">
+		select count(*)
+		from notice
+		order by nno desc
+	</select>
+
+	<select id="selectNoticeListForPeriod" resultType="notice">
+	<![CDATA[
+		select *
+		from notice			
+		where startDate < sysdate+1 and endDate > sysdate-1
+		order by nno desc
+		]]>
+	</select>
+	
+	<select id="selectNoticeListForPeriodCount" resultType="int">
+	<![CDATA[
+		select count(*)
+		from notice			
+		where startDate < sysdate+1 and endDate > sysdate-1
+		order by nno desc
+		]]>
+	</select>
+
+	<!-- 중요한것만 가져오는 리스트(사용자가 보는 부분) -->
+	<!-- where절 안에 있는 등가연산자는 비교연산자 -->
+	<select id="selectNoticeListForImp" resultType="notice">
+		<![CDATA[
+		select *
+		from notice			
+		where ((startDate < sysdate+1) and (endDate > sysdate-1))
+				and imp = 1
+				order by nno desc
+		]]>
+	</select>
+
+	<select id="selectNoticeByNNO" resultType="notice">
+		select *
+		from notice
+		where nno=#{nno}
+	</select>
+	
+	
+	<select id="selectNextSeq" resultType="int">
+		select notice_seq.nextval
+		from dual
+	</select>	
+
+	<update id="insertNotice">
+		insert into
+		notice (nno,title,id,content,startDate,endDate,imp)
+		values(#{nno},#{title},#{id},#{content},#{startDate},#{endDate},#{imp})
+	</update>
+
+	<update id="updateNotice">
+		update notice
+		set
+		title=#{title}, content=#{content}, startDate=#{startDate}, endDate=#{endDate}, imp=#{imp}
+		where nno = #{nno}
+	</update>
+
+	<update id="deleteNotice">
+		delete
+		from notice
+		where nno = #{nno}
+	</update>
+	
+	<update id="increaseViewCnt">
+		update notice
+		set
+		viewcnt = viewcnt+1
+		where nno=#{nno}
+	</update>
+</mapper>
+
+    
