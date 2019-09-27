@@ -36,7 +36,7 @@ public class FreeController {
 		return "free";
 	}	
 
-	@ModelAttribute("loginUser")	//임시 로그인 아이디
+	@ModelAttribute("loginUser")	//�엫�떆 濡쒓렇�씤 �븘�씠�뵒
 	public MemberVO loginUser() throws Exception{
 		MemberVO loginUser = new MemberVO();
 		loginUser.setId("mimi");
@@ -113,7 +113,7 @@ public class FreeController {
 		response.setContentType("text/html;charset=utf-8");
 		PrintWriter out = response.getWriter();
 		out.println("<script>");
-		out.println("alert('글을 삭제하였습니다.')");
+		out.println("alert('湲��쓣 ')");
 		out.println("window.opener.location.reload();window.close()");
 		out.println("</script>");
 	}
