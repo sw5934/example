@@ -52,6 +52,7 @@ public class CommonController {
 	
 	@RequestMapping("/main.htm")
 	public void main() {
+		System.out.println("!!!!!!!!!!!!!!!!!!!!");
 		logger.info("request url : /main");
 		
 	}
